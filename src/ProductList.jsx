@@ -260,6 +260,7 @@ const handleAddToCart = (item) => {
        [item.name]: true, // Set the item name as key and value as true to indicate it's added to cart
      }));
   };
+ 
     return (
         <div>
              <div className="navbar" style={styleObj}>
