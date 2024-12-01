@@ -1,0 +1,147 @@
+1. CartSlice.jsx
+Set up the Redux slice for managing cart actions and state.
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const cartSlice = createSlice({
+  name: "cart",
+  initialState: {
+    items: [], // Holds all cart items
+  },
+  reducers: {
+    // Reducer to add an item to the cart
+    addItem: (state, action) => {
+      const { name, image, cost } = action.payload;
+      const existingItem = state.items.find((item) => item.name === name);
+
+      if (existingItem) {
+        existingItem.quantity++; // Increment quantity if item exists
+      } else {
+        state.items.push({ name, image, cost, quantity: 1 }); // Add new item
+      }
+    },
+    // Reducer to increment item quantity
+    increment: (state, action) => {
+      const { name } = action.payload;
+      const existingItem = state.items.find((item) => item.name === name);
+      if (existingItem) {
+        existingItem.quantity++; // Increment quantity
+      }
+    },
+    // Reducer to decrement item quantity
+    decrement: (state, action) => {
+      const { name } = action.payload;
+      const existingItem = state.items.find((item) => item.name === name);
+      if (existingItem && existingItem.quantity > 1) {
+        existingItem.quantity--; // Decrement quantity if > 1
+      }
+    },
+  },
+});
+
+export const { addItem, increment, decrement } = cartSlice.actions;
+export default cartSlice.reducer;
+2. Plant Listing Page
+This component lists plants and allows the user to add a plant to the cart using handleAddToCart.
+
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addItem } from "./CartSlice";
+
+const PlantList = ({ plants }) => {
+  const dispatch = useDispatch();
+  const [addedToCart, setAddedToCart] = useState({}); // Tracks which plants are added
+
+  const handleAddToCart = (plant) => {
+    // Dispatch the addItem action
+    dispatch(addItem(plant));
+
+    // Update the local state to reflect the addition
+    setAddedToCart((prevState) => ({
+      ...prevState,
+      [plant.name]: true, // Mark this plant as added
+    }));
+  };
+
+  return (
+    <div>
+      {plants.map((plant) => (
+        <div key={plant.name}>
+          <h3>{plant.name}</h3>
+          <img src={plant.image} alt={plant.name} />
+          <p>Price: ${plant.cost}</p>
+          <button
+            onClick={() => handleAddToCart(plant)}
+            disabled={!!addedToCart[plant.name]} // Disable if already added
+          >
+            {addedToCart[plant.name] ? "Added to Cart" : "Add to Cart"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default PlantList;
+3. CartItem.jsx
+This component displays items in the shopping cart and provides functionality to update item quantities.
+
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { increment, decrement } from "./CartSlice";
+
+const CartItem = () => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items); // Get items from the store
+
+  return (
+    <div>
+      <h2>Your Cart</h2>
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty!</p>
+      ) : (
+        cartItems.map((item) => (
+          <div key={item.name}>
+            <h3>{item.name}</h3>
+            <img src={item.image} alt={item.name} />
+            <p>Price: ${item.cost}</p>
+            <p>Quantity: {item.quantity}</p>
+            <button onClick={() => dispatch(increment({ name: item.name }))}>
+              +
+            </button>
+            <button onClick={() => dispatch(decrement({ name: item.name }))}>
+              -
+            </button>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+export default CartItem;
+4. Connecting Redux Store
+Ensure you’ve configured the Redux store and wrapped your app with the Provider.
+
+store.js
+import { configureStore } from "@reduxjs/toolkit";
+import cartReducer from "./CartSlice";
+
+export const store = configureStore({
+  reducer: {
+    cart: cartReducer,
+  },
+});
+index.js
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import App from "./App";
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);

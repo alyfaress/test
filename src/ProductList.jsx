@@ -1,10 +1,13 @@
 import React, { useState,useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
-function ProductList() {
+import { useDispatch } from 'react-redux';
+import { addItem } from './CartSlice';//when to add {} or dropit, as it causes error(impoeted object not found) when missing if it must be added
+
+function ProductList({plant}) {
     const [showCart, setShowCart] = useState(false); 
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-
+    const [addedToCart, setAddedToCart] = useState({});
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -246,6 +249,17 @@ const handlePlantsClick = (e) => {
     e.preventDefault();
     setShowCart(false);
   };
+ 
+  const dispatch = useDispatch();
+
+const handleAddToCart = (item) => {
+    console.log("Adding to cart:", item); // Check item object structure in console
+    dispatch(addItem(item));//send item(that contains properties(name,image,cost..) to reducer "addItem" )
+    setAddedToCart((prevState) => ({
+       ...prevState,
+       [item.name]: true, // Set the item name as key and value as true to indicate it's added to cart
+     }));
+  };
     return (
         <div>
              <div className="navbar" style={styleObj}>
@@ -268,7 +282,26 @@ const handlePlantsClick = (e) => {
         </div>
         {!showCart? (
         <div className="product-grid">
+                  {plantsArray.map((object,index)=>(//How will .map()knows what is object given to it?answer:it will return all objects(or item) of variable its called for(plantsArray)and treat every one as an object ,moreover this .map() will iterate (make loop iteration=number of objects in plantsArrays so all of them dispalyed
+                    <div key={index}>                {/*element directly after .map should always take key={index*/}
+                    <h2>{object.category}</h2>
+                    <div className="product-list">
+                    {object.plants.map((plant,plantindex)=>(//while this .map() will make another  iteration(which is equal to num of plants) inside every object,here num of boject=num of plant since every object has a plant,so this iteration of this map()is useless however its accessing and indexing(assinging for each plant an plantindex) is usefull
+                                          
+                                 <div className="product-card" key={plantindex}>
+                                 <img className="product-image" src={plant.image} alt={plant.name} />
+                                 <div className="product-title">{plant.name}</div>
+                                 <p>{plant.description}</p>
+                                 <p>{plant.cost}</p>
+                                 <button  className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                       </div>
 
+                    ))}
+                    
+                    </div>
+                    
+                    </div>
+))}
 
         </div>
  ) :  (

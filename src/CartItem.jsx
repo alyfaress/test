@@ -4,7 +4,7 @@ import { removeItem, updateQuantity } from './CartSlice';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
-  const cart = useSelector(state => state.cart.items);
+  const cart = useSelector((state) => state.cart.items); // Access cart items from Redux store
   const dispatch = useDispatch();
 
   // Calculate total amount for all products in the cart
