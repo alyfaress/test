@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import ProductList from './ProductList';
 import './App.css';
 import AboutUs from './AboutUs';
-
 function App() {
   
   const [showProductList, setShowProductList] = useState(false);
@@ -27,6 +26,7 @@ function App() {
           </button>
          </div>
           <div className="aboutus_container">
+         
           <AboutUs/>
           </div>
           </div>
