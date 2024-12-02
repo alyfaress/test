@@ -9,11 +9,14 @@ import store from './store.js'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
    
-    <BrowserRouter basename="/plantShopping-CapstoneProject">
     <Provider store={store}>
+      
+      
+      
+      
+      
     <App />
     </Provider>
-  </BrowserRouter>
     
   </React.StrictMode>,
 )

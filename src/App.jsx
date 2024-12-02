@@ -27,7 +27,12 @@ function App() {
          </div>
           <div className="aboutus_container">
          
-          <AboutUs/>
+          <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/plantShopping-CapstoneProject" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
           </div>
           </div>
 
