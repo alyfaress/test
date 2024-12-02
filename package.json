@@ -6,7 +6,7 @@
   "homepage": "https://alyfaress.github.io/plantShopping-CapstoneProject",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alyfaress/plantShopping-CapstoneProject.git"
+    "url": "https://github.com/alyfaress/plantShopping-CapstoneProject"
   },
   "scripts": {
     "dev": "vite",
